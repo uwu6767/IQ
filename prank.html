@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แบบทดสอบ IQ ระดับโลก 🧠</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: white;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 40px 36px;
+      max-width: 480px;
+      width: 100%;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #f7971e, #ffd200);
+      color: #1a1a2e;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,0.55);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* STEP */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    /* Questions */
+    .question-label {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #ffd200;
+    }
+
+    .question-text {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+
+    .choice-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      font-family: 'Kanit', sans-serif;
+      font-size: 15px;
+      padding: 13px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .choice-btn:hover {
+      background: rgba(255,210,0,0.15);
+      border-color: #ffd200;
+      color: #ffd200;
+    }
+
+    /* Progress */
+    .progress-bar-wrap {
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      height: 6px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f7971e, #ffd200);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    /* Upload area */
+    .upload-area {
+      border: 2px dashed rgba(255,210,0,0.4);
+      border-radius: 16px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .upload-area:hover {
+      border-color: #ffd200;
+      background: rgba(255,210,0,0.05);
+    }
+    .upload-area .icon { font-size: 40px; margin-bottom: 10px; }
+    .upload-area p { color: rgba(255,255,255,0.7); font-size: 14px; }
+    .upload-area strong { color: #ffd200; }
+    #file-input { display: none; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px;
+      background: linear-gradient(90deg, #f7971e, #ffd200);
+      color: #1a1a2e;
+      font-family: 'Kanit', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn:not(:disabled):hover { opacity: 0.9; }
+
+    /* Result */
+    #result-img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 16px;
+      margin: 20px 0 16px;
+      border: 3px solid #ffd200;
+    }
+
+    .result-score {
+      font-size: 52px;
+      font-weight: 800;
+      text-align: center;
+      color: #ffd200;
+    }
+
+    .result-label {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .result-msg {
+      text-align: center;
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+    }
+
+    .retry-btn {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      font-weight: 600;
+    }
+    .retry-btn:hover { background: rgba(255,255,255,0.18); }
+
+    .analyzing {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 4px solid rgba(255,210,0,0.2);
+      border-top-color: #ffd200;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">🌍 Certified by Mensa Thailand</div>
+  <h1>แบบทดสอบ IQ<br>ระดับโลก 2025</h1>
+  <p class="subtitle">ค้นพบระดับสติปัญญาที่แท้จริงของคุณใน 3 นาที</p>
+
+  <!-- STEP 1: Q1 -->
+  <div class="step active" id="step-1">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:20%"></div></div>
+    <div class="question-label">ข้อ 1 / 4</div>
+    <div class="question-text">ถ้า 2 + 2 = 4 แล้ว 3 × 3 = ?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="next(2)">6</button>
+      <button class="choice-btn" onclick="next(2)">8</button>
+      <button class="choice-btn" onclick="next(2)">9</button>
+      <button class="choice-btn" onclick="next(2)">12</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Q2 -->
+  <div class="step" id="step-2">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:40%"></div></div>
+    <div class="question-label">ข้อ 2 / 4</div>
+    <div class="question-text">รูปต่อไปนี้คืออะไร?<br>🍎 🍊 🍋 🍇 ❓</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="next(3)">🍓 สตรอเบอร์รี่</button>
+      <button class="choice-btn" onclick="next(3)">🍑 พีช</button>
+      <button class="choice-btn" onclick="next(3)">🍍 สับปะรด</button>
+      <button class="choice-btn" onclick="next(3)">🥝 กีวี่</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Q3 -->
+  <div class="step" id="step-3">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:60%"></div></div>
+    <div class="question-label">ข้อ 3 / 4</div>
+    <div class="question-text">คำใดไม่เข้าพวก?<br>"สุนัข — แมว — ม้า — โต๊ะ"</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="next(4)">สุนัข</button>
+      <button class="choice-btn" onclick="next(4)">แมว</button>
+      <button class="choice-btn" onclick="next(4)">ม้า</button>
+      <button class="choice-btn" onclick="next(4)">โต๊ะ</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Q4 -->
+  <div class="step" id="step-4">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:80%"></div></div>
+    <div class="question-label">ข้อ 4 / 4</div>
+    <div class="question-text">1, 4, 9, 16, 25 — ตัวต่อไปคือ?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="next(5)">30</button>
+      <button class="choice-btn" onclick="next(5)">36</button>
+      <button class="choice-btn" onclick="next(5)">49</button>
+      <button class="choice-btn" onclick="next(5)">42</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Upload -->
+  <div class="step" id="step-5">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:90%"></div></div>
+    <div class="question-label">ขั้นตอนสุดท้าย</div>
+    <div class="question-text">ระบบจำเป็นต้องสแกนใบหน้าเพื่อ<br><strong style="color:#ffd200">ยืนยันตัวตนผู้ทำแบบทดสอบ</strong> 🔒</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;">ข้อมูลถูกเข้ารหัส 256-bit และจะถูกลบทันทีหลังการยืนยัน</p>
+    <div class="upload-area" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📸</div>
+      <p><strong>กดเพื่ออัปโหลดรูปภาพของคุณ</strong></p>
+      <p style="margin-top:6px;">รองรับ JPG, PNG ขนาดไม่เกิน 10MB</p>
+    </div>
+    <input type="file" id="file-input" accept="image/*" onchange="handleUpload(event)" />
+    <button class="btn" id="submit-btn" disabled onclick="analyze()">ดูผลคะแนน IQ ของฉัน →</button>
+  </div>
+
+  <!-- STEP 6: Analyzing -->
+  <div class="step" id="step-6">
+    <div class="analyzing">
+      <div class="spinner"></div>
+      <p style="font-size:16px;font-weight:600;">กำลังวิเคราะห์...</p>
+      <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:8px;">ประมวลผลด้วย Neural AI v4.2</p>
+    </div>
+  </div>
+
+  <!-- STEP 7: Result -->
+  <div class="step" id="step-7">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%"></div></div>
+    <img id="result-img" src="" alt="รูปของคุณ" />
+    <div class="result-score" id="iq-score">47</div>
+    <div class="result-label" id="iq-label">🥴 ไอคิวต่ำกว่าก้อนหิน</div>
+    <p class="result-msg" id="iq-msg">ระบบวิเคราะห์แล้วพบว่า... คุณอาจต้องการความช่วยเหลือในการนับเลข ขอแนะนำให้ฝึกกับเด็กอนุบาล</p>
+    <button class="btn retry-btn" onclick="reset()">ทำแบบทดสอบใหม่</button>
+  </div>
+
+</div>
+
+<script>
+  let uploadedSrc = null;
+
+  function next(stepNum) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + stepNum).classList.add('active');
+  }
+
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      uploadedSrc = ev.target.result;
+      document.getElementById('submit-btn').disabled = false;
+      const area = document.querySelector('.upload-area');
+      area.innerHTML = `<div class="icon">✅</div><p><strong style="color:#ffd200">อัปโหลดสำเร็จ!</strong></p><p style="margin-top:6px;">${file.name}</p>`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function analyze() {
+    next(6);
+    setTimeout(showResult, 2800);
+  }
+
+  const results = [
+    { score: 47, label: "🥴 ไอคิวต่ำกว่าก้อนหิน", msg: "ระบบวิเคราะห์แล้วพบว่า... คุณอาจต้องการความช่วยเหลือในการนับเลข ขอแนะนำให้เริ่มฝึกกับเด็กอนุบาล 🍼" },
+    { score: 52, label: "🐒 เกือบเท่าลิงชิมแปนซี", msg: "ไม่ต้องเสียใจ! ลิงชิมแปนซีก็ฉลาดนะ แค่ฉลาดกว่าคุณนิดหน่อย 🐒" },
+    { score: 61, label: "🪨 ก้อนหินยังเก่งกว่า", msg: "ก้อนหินอย่างน้อยยังไม่ตอบคำถามผิด แต่คุณ... 😶" },
+    { score: 38, label: "🌿 ต้นไม้มีความคิดมากกว่า", msg: "นักวิทยาศาสตร์พิสูจน์แล้วว่าต้นไม้มีการตอบสนองต่อสิ่งแวดล้อมได้ดีกว่าคุณ 🌿" },
+  ];
+
+  function showResult() {
+    const r = results[Math.floor(Math.random() * results.length)];
+    document.getElementById('result-img').src = uploadedSrc;
+    document.getElementById('iq-score').textContent = r.score;
+    document.getElementById('iq-label').textContent = r.label;
+    document.getElementById('iq-msg').textContent = r.msg;
+    next(7);
+  }
+
+  function reset() {
+    uploadedSrc = null;
+    document.getElementById('file-input').value = '';
+    document.getElementById('submit-btn').disabled = true;
+    document.querySelector('.upload-area').innerHTML = `
+      <div class="icon">📸</div>
+      <p><strong>กดเพื่ออัปโหลดรูปภาพของคุณ</strong></p>
+      <p style="margin-top:6px;">รองรับ JPG, PNG ขนาดไม่เกิน 10MB</p>
+    `;
+    document.querySelector('.upload-area').onclick = () => document.getElementById('file-input').click();
+    next(1);
+  }
+</script>
+</body>
+</html>
